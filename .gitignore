@@ -1,0 +1,27 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Chroma persistent database
+chroma_db/
+
+# Runtime uploads
+data/uploads/
+
+# Temporary test files
+empty.pdf
+fake.pdf
+test.txt
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
