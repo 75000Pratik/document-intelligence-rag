@@ -4,6 +4,13 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
+model_name = "google/flan-t5-small"
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+generator_model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+
 client = chromadb.PersistentClient(
     path="chroma_db"
 )
@@ -33,6 +40,13 @@ def answer_question(question, document_id):
     retrieved_metadata = results["metadatas"][0]
 
     distances = results["distances"][0]
+
+    if not distances:
+        return {
+            "answer": "I don't know based on the provided document.",
+            "sources": [],
+            "distances": []
+        }
 
     best_distance = distances[0]
 
@@ -64,12 +78,6 @@ Answer:
         answer = "I don't know based on the provided document."
 
     else:
-        model_name = "google/flan-t5-small"
-
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-        generator_model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-
         inputs = tokenizer(
             prompt,
             return_tensors="pt"

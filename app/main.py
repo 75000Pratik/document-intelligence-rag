@@ -24,6 +24,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
+
 class QuestionRequest(BaseModel):
     question: str = Field(
         ...,
@@ -54,6 +55,7 @@ class UploadResponse(BaseModel):
     filename: str
     chunks_created: int
 
+
 @app.get(
     "/",
     tags=["General"],
@@ -79,6 +81,7 @@ def health():
     return {
         "status": "ok"
     }
+
 
 @app.post(
     "/ask",
@@ -108,7 +111,6 @@ def ask_question(request: QuestionRequest):
     )
 
     return result
-
 
 
 @app.post(
@@ -147,7 +149,8 @@ async def upload_document(
         exist_ok=True
     )
 
-    file_path = upload_dir / file.filename
+    safe_filename = Path(file.filename).name
+    file_path = upload_dir / safe_filename
 
     # Read uploaded file
     contents = await file.read()
@@ -190,9 +193,21 @@ async def upload_document(
             str(file_path)
         )
 
+    except ValueError as exc:
+        logger.warning(
+            "Document upload rejected filename=%s reason=%s",
+            file.filename,
+            str(exc)
+        )
+
+        raise HTTPException(
+            status_code=409,
+            detail=str(exc)
+        )
+
     except Exception:
         logger.exception(
-            "Document ingestion failed filename=%s",
+            "Unexpected Document ingestion failure filename=%s",
             file.filename
         )
 
@@ -200,8 +215,8 @@ async def upload_document(
             file_path.unlink()
 
         raise HTTPException(
-            status_code=400,
-            detail="The PDF could not be processed."
+            status_code=500,
+            detail="Internal server error while processing the document."
         )
 
     logger.info(
@@ -212,6 +227,6 @@ async def upload_document(
 
     return {
         "message": "Document uploaded and indexed successfully",
-        "filename": file.filename,
+        "filename": safe_filename,
         "chunks_created": len(chunks)
     }

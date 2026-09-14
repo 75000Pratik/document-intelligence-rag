@@ -3,6 +3,8 @@ from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
 from pathlib import Path
 
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
 
 def extract_pdf_text(pdf_path):
     reader = PdfReader(pdf_path)
@@ -70,8 +72,6 @@ def ingest_document(pdf_path, document_id=None):
 
     print("\nTotal chunks created:", len(all_chunks))
 
-    model = SentenceTransformer("all-MiniLM-L6-v2")
-
     chunk_texts = [
         chunk["text"]
         for chunk in all_chunks
@@ -85,10 +85,17 @@ def ingest_document(pdf_path, document_id=None):
         path="chroma_db"
     )
 
-
     collection = client.get_or_create_collection(
         name="document_chunks"
     )
+
+    existing = collection.get(
+        where={"document_id": document_id},
+        include=["metadatas"]
+    )
+
+    if existing["ids"]:
+        raise ValueError(f"Document '{document_id}' already exists.")
 
     ids = [
         chunk["chunk_id"]
