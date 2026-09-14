@@ -120,21 +120,37 @@ def test_ask_missing_document():
 
 
 def test_upload_duplicate_document():
+    filename = "duplicate_test.pdf"
+
     with open("data/sample.pdf", "rb") as file:
-        response = client.post(
+        first_response = client.post(
             "/upload",
             files={
                 "file": (
-                    "sample.pdf",
+                    filename,
                     file,
                     "application/pdf"
                 )
             }
         )
 
-    assert response.status_code == 409
-    assert response.json() == {
-        "detail": "Document 'sample' already exists."
+    assert first_response.status_code == 200
+
+    with open("data/sample.pdf", "rb") as file:
+        second_response = client.post(
+            "/upload",
+            files={
+                "file": (
+                    filename,
+                    file,
+                    "application/pdf"
+                )
+            }
+        )
+
+    assert second_response.status_code == 409
+    assert second_response.json() == {
+        "detail": "Document 'duplicate_test' already exists."
     }
 
 
