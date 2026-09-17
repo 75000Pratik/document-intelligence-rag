@@ -25,3 +25,7 @@ test.txt
 # OS files
 .DS_Store
 Thumbs.db
+
+data/conversation_history.json
+data/day41_sample.pdf
+data/ui_sample.pdf

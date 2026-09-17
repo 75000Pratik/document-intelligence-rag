@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Document Intelligence RAG Assistant</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Document Intelligence RAG Assistant</h1>
+
+      <p>Upload a PDF and ask grounded questions with source citations.</p>
+
+      <section>
+        <h2>Upload Document</h2>
+
+        <input type="file" id="pdfFile" accept=".pdf" />
+
+        <button id="uploadButton">Upload PDF</button>
+
+        <p id="uploadStatus"></p>
+      </section>
+
+      <section>
+        <h2>Ask Question</h2>
+
+        <label for="documentId"> Document ID </label>
+
+        <input type="text" id="documentId" placeholder="example: sample" />
+
+        <label for="conversationId"> Conversation ID </label>
+
+        <input
+          type="text"
+          id="conversationId"
+          placeholder="example: conversation_1"
+        />
+
+        <label for="question"> Question </label>
+
+        <textarea
+          id="question"
+          rows="4"
+          placeholder="Ask a question about the document"
+        ></textarea>
+
+        <button id="askButton">Ask Question</button>
+      </section>
+
+      <section>
+        <h2>Answer</h2>
+
+        <p id="answer">Your answer will appear here.</p>
+
+        <div id="sources"></div>
+      </section>
+
+      <section>
+        <h2>Conversation History</h2>
+
+        <button id="historyButton">View History</button>
+
+        <div id="history">Conversation history will appear here.</div>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

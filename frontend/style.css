@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #222;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+#answer {
+    padding: 12px;
+    background: #f7f7f7;
+    border-radius: 6px;
+}
+
+#history {
+    margin-top: 15px;
+}
+
+#history div {
+    background: #f7f7f7;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+#history p {
+    margin: 6px 0;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#uploadStatus {
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+#sources {
+    margin-top: 10px;
+}
+
+#sources p {
+    background: #f7f7f7;
+    padding: 8px 20px;
+    border-radius: 6px;
+    margin: 6px 0;
+}

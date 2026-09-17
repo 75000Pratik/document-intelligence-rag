@@ -2,6 +2,7 @@ import chromadb
 from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
 from pathlib import Path
+from app.chunker import chunk_text
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
@@ -22,26 +23,6 @@ def extract_pdf_text(pdf_path):
                 }
             )
     return pages
-
-
-def chunk_text(text, chunk_size=20, overlap=5):
-    words = text.split()
-
-    chunks = []
-
-    start = 0
-
-    while start < len(words):
-        end = start + chunk_size
-
-        chunk_words = words[start:end]
-
-        chunk = " ".join(chunk_words)
-
-        chunks.append(chunk)
-
-        start += chunk_size - overlap
-    return chunks
 
 
 def ingest_document(pdf_path, document_id=None):
@@ -71,6 +52,11 @@ def ingest_document(pdf_path, document_id=None):
             all_chunks.append(chunk_data)
 
     print("\nTotal chunks created:", len(all_chunks))
+
+    if not all_chunks:
+        raise ValueError(
+            "No readable text could be extracted from the PDF."
+        )
 
     chunk_texts = [
         chunk["text"]

@@ -50,7 +50,7 @@ def answer_question(question, document_id):
 
     best_distance = distances[0]
 
-    threshold = 1.0
+    threshold = 1.325
 
     context = "\n".join(retrieved_chunks)
 

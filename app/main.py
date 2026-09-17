@@ -3,9 +3,12 @@ from pathlib import Path
 
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from pydantic import BaseModel, Field
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.rag import answer_question
 from app.ingest import ingest_document
+
+from app.conversation import add_message, get_history
 
 logging.basicConfig(
     level=logging.INFO,
@@ -24,6 +27,14 @@ app = FastAPI(
     version="1.0.0"
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
 
 class QuestionRequest(BaseModel):
     question: str = Field(
@@ -36,6 +47,12 @@ class QuestionRequest(BaseModel):
         ...,
         min_length=1,
         description="ID of the document to search"
+    )
+
+    conversation_id: str = Field(
+        ...,
+        min_length=1,
+        description="Conversation ID used to store chat history"
     )
 
 
@@ -105,12 +122,31 @@ def ask_question(request: QuestionRequest):
         request.document_id
     )
 
+    add_message(
+        request.conversation_id,
+        request.question,
+        result["answer"]
+    )
+
     logger.info(
         "Answer generated successfully for document_id=%s",
         request.document_id
     )
 
     return result
+
+
+@app.get(
+    "/history/{conversation_id}",
+    tags=["RAG"],
+    summary="Get conversation history",
+    description="Returns all saved question-answer pairs for a conversation."
+)
+def conversation_history(conversation_id: str):
+    return {
+        "conversation_id": conversation_id,
+        "messages": get_history(conversation_id)
+    }
 
 
 @app.post(

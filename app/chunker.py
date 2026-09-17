@@ -1,8 +1,10 @@
+import re
+
+
 def chunk_text(text, chunk_size=20, overlap=5):
     words = text.split()
 
-    chunks=[]
-
+    chunks = []
     start = 0
 
     while start < len(words):
@@ -18,17 +20,23 @@ def chunk_text(text, chunk_size=20, overlap=5):
 
     return chunks
 
-sample_text = """
-Retrieval-Augmented Generation combines information retrieval
-with language models. Documents are first processed and divided
-into smaller chunks. These chunks can later be converted into
-embeddings and stored inside a vector database.
-"""    
 
-chunks = chunk_text(sample_text, chunk_size=20, overlap=5)
+if __name__ == "__main__":
+    sample_text = """
+    Retrieval-Augmented Generation combines information retrieval
+    with language models. Documents are first processed and divided
+    into smaller chunks. These chunks can later be converted into
+    embeddings and stored inside a vector database.
+    """
 
-print("Number of chunks:", len(chunks))
+    chunks = chunk_text(
+        sample_text,
+        chunk_size=20,
+        overlap_sentences=1
+    )
 
-for index, chunk in enumerate(chunks, start=1):
-    print(f"\n--- Chunk {index} ---")
-    print(chunk)
+    print("Number of chunks:", len(chunks))
+
+    for index, chunk in enumerate(chunks, start=1):
+        print(f"\n--- Chunk {index} ---")
+        print(chunk)
