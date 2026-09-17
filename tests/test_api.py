@@ -204,14 +204,23 @@ def test_upload_internal_server_error():
 def test_conversation_history():
     conversation_id = "test_conversation_history"
 
-    ask_response = client.post(
-        "/ask",
-        json={
-            "question": "What does Retrieval-Augmented Generation combine?",
-            "document_id": "sample",
-            "conversation_id": conversation_id
+    with patch(
+        "app.main.answer_question",
+        return_value={
+            "answer": "document retrieval with a language model",
+            "sources": [],
+            "distances": []
         }
-    )
+    ):
+
+        ask_response = client.post(
+            "/ask",
+            json={
+                "question": "What does Retrieval-Augmented Generation combine?",
+                "document_id": "sample",
+                "conversation_id": conversation_id
+            }
+        )
 
     assert ask_response.status_code == 200
 
@@ -225,12 +234,15 @@ def test_conversation_history():
 
     assert data["conversation_id"] == conversation_id
     assert len(data["messages"]) >= 1
+
     assert data["messages"][-1]["question"] == (
         "What does Retrieval-Augmented Generation combine?"
     )
+
     assert data["messages"][-1]["answer"] == (
         "document retrieval with a language model"
     )
+
 
 def test_conversation_history_persistence():
     conversation_id = "persistence_test_case"
