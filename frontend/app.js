@@ -24,7 +24,7 @@ uploadButton.addEventListener("click", async () => {
 
     try {
         const response = await fetch(
-            "http://127.0.0.1:8000/upload",
+            "/upload",
             {
                 method: "POST",
                 body: formData
@@ -99,7 +99,7 @@ askButton.addEventListener("click", async () => {
 
     try {
         const response = await fetch(
-            "http://127.0.0.1:8000/ask",
+            "/ask",
             {
                 method: "POST",
                 headers: {
@@ -178,7 +178,7 @@ historyButton.addEventListener("click", async () => {
 
     try {
         const response = await fetch(
-            `http://127.0.0.1:8000/history/${conversationId}`
+            `/history/${conversationId}`
         );
 
         const data = await response.json();

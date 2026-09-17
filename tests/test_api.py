@@ -29,7 +29,8 @@ def test_ask_short_question():
         "/ask",
         json={
             "question": "Hi",
-            "document_id": "sample"
+            "document_id": "sample",
+            "conversation_id": "short_question_test"
         }
     )
 
@@ -41,7 +42,8 @@ def test_ask_empty_document_id():
         "/ask",
         json={
             "question": "WHat is RAG?",
-            "document_id": ""
+            "document_id": "",
+            "conversation_id": "empty_document_test"
         }
     )
 
@@ -155,30 +157,33 @@ def test_upload_duplicate_document():
 
 
 def test_upload_sanitizes_filename():
+    unique_id = uuid.uuid4().hex
+    unsafe_name = f"../unsafe_{unique_id}.pdf"
+    expected_name = f"unsafe_{unique_id}.pdf"
+
     with open("data/sample.pdf", "rb") as file:
         response = client.post(
             "/upload",
             files={
                 "file": (
-                    "../unsafe.pdf",
+                    unsafe_name,
                     file,
                     "application/pdf"
                 )
             }
         )
 
-    assert response.status_code in (200, 409)
+    assert response.status_code == 200
 
     data = response.json()
 
-    if response.status_code == 200:
-        assert data["filename"] == "unsafe.pdf"
-
-    if response.status_code == 409:
-        assert "already exists" in data["detail"]
+    assert data["filename"] == expected_name
 
 
 def test_upload_internal_server_error():
+    unique_id = uuid.uuid4().hex
+    filename = f"server_error_{unique_id}.pdf"
+
     with patch(
         "app.main.ingest_document",
         side_effect=RuntimeError("Database failure")
@@ -188,7 +193,7 @@ def test_upload_internal_server_error():
                 "/upload",
                 files={
                     "file": (
-                        "server_error_test.pdf",
+                        filename,
                         file,
                         "application/pdf"
                     )
@@ -245,16 +250,25 @@ def test_conversation_history():
 
 
 def test_conversation_history_persistence():
-    conversation_id = "persistence_test_case"
+    conversation_id = f"persistence_test_{uuid.uuid4().hex}"
 
-    ask_response = client.post(
-        "/ask",
-        json={
-            "question": "What does Retrieval-Augmented Generation combine?",
-            "document_id": "sample",
-            "conversation_id": conversation_id
+    with patch(
+        "app.main.answer_question",
+        return_value={
+            "answer": "document retrieval with a language model",
+            "sources": [],
+            "distances": []
         }
-    )
+    ):
+
+        ask_response = client.post(
+            "/ask",
+            json={
+                "question": "What does Retrieval-Augmented Generation combine?",
+                "document_id": "sample",
+                "conversation_id": conversation_id
+            }
+        )
 
     assert ask_response.status_code == 200
 

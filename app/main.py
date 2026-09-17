@@ -4,6 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.rag import answer_question
 from app.ingest import ingest_document
@@ -33,6 +34,12 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
+)
+
+app.mount(
+    "/app",
+    StaticFiles(directory="frontend", html=True),
+    name="frontend"
 )
 
 
