@@ -531,6 +531,7 @@ docker run `
   -p 8000:8000 `
   -v rag_chroma_data:/app/chroma_db `
   -v rag_uploads_data:/app/data/uploads `
+  -v rag_history_data:/app/data/history `
   document-intelligence-rag
 ```
 
