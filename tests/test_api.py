@@ -206,6 +206,41 @@ def test_upload_internal_server_error():
     }
 
 
+def test_uploaded_document_preserves_source_filename():
+    unique_id = uuid.uuid4().hex
+    filename = f"citation_test_{unique_id}.pdf"
+    document_id = filename.replace(".pdf", "")
+
+    with open("data/sample.pdf", "rb") as file:
+        upload_response = client.post(
+            "/upload",
+            files={
+                "file": (
+                    filename,
+                    file,
+                    "application/pdf"
+                )
+            }
+        )
+    assert upload_response.status_code == 200
+
+    ask_response = client.post(
+        "/ask",
+        json={
+            "question": "What does Retrieval-Augmented Generation combine?",
+            "document_id": document_id,
+            "conversation_id": f"citation_test_{unique_id}"
+        }
+    )
+
+    assert ask_response.status_code == 200
+
+    data = ask_response.json()
+
+    assert len(data["sources"]) >= 1
+    assert data["sources"][0]["source"] == filename
+
+
 def test_conversation_history():
     conversation_id = "test_conversation_history"
 

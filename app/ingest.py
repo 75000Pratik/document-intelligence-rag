@@ -42,7 +42,7 @@ def ingest_document(pdf_path, document_id=None):
 
         for index, chunk in enumerate(chunks, start=1):
             chunk_data = {
-                "source": "sample.pdf",
+                "source": Path(pdf_path).name,
                 "page": page["page"],
                 "chunk_id": f"{document_id}_page{page['page']}_chunk{index}",
                 "document_id": document_id,
