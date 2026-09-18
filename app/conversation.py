@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-HISTORY_FILE = Path("data/conversation_history.json")
+HISTORY_FILE = Path("data/history/conversation_history.json")
 
 
 def load_history():
